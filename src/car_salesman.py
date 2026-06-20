@@ -4,7 +4,7 @@ from typing import Iterator
 
 from dotenv import load_dotenv
 from google import genai
-from google.genai.errors import ServerError
+from google.genai.errors import APIError
 
 from .customer import Customer
 
@@ -27,12 +27,15 @@ def get_response(
           system_instruction=f"You are a car salesman from {country}. Respond in the language of the country and with the characteristic way of speaking of that country."
         ),
       )
-    except ServerError:
-      print(
-        f"Attempt {attempt + 1} failed due to 503 (High Demand). Retrying in {delay}s."
-      )
-      time.sleep(delay)
-      delay *= 2
+    except APIError as e:
+      if e.code == 503:
+        print(
+          f"Attempt {attempt + 1} failed due to 503 (High Demand). Retrying in {delay}s."
+        )
+        time.sleep(delay)
+        delay *= 2
+      else:
+        raise e
     except Exception as e:
       print(f"Non-retryable error: {e}")
       raise e
