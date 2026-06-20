@@ -1,8 +1,10 @@
 import os
+import time
 from typing import Iterator
 
 from dotenv import load_dotenv
 from google import genai
+from google.genai.errors import ServerError
 
 from .customer import Customer
 
@@ -13,15 +15,29 @@ client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
 
 def get_response(
-  prompt: str, country: str
+  prompt: str, country: str, max_retries=5, initial_delay=2
 ) -> Iterator[genai.types.GenerateContentResponse]:
-  return client.models.generate_content_stream(
-    model="gemini-3.5-flash",
-    contents=prompt,
-    config=genai.types.GenerateContentConfig(
-      system_instruction=f"You are a car salesman from {country}. Respond in the language of the country and with the characteristic way of speaking of that country."
-    ),
-  )
+  delay = initial_delay
+  for attempt in range(max_retries):
+    try:
+      return client.models.generate_content_stream(
+        model="gemini-3.5-flash",
+        contents=prompt,
+        config=genai.types.GenerateContentConfig(
+          system_instruction=f"You are a car salesman from {country}. Respond in the language of the country and with the characteristic way of speaking of that country."
+        ),
+      )
+    except ServerError:
+      print(
+        f"Attempt {attempt + 1} failed due to 503 (High Demand). Retrying in {delay}s."
+      )
+      time.sleep(delay)
+      delay *= 2
+    except Exception as e:
+      print(f"Non-retryable error: {e}")
+      raise e
+
+  raise Exception("Max retries exceeded. Gemini API is still unavailable.")
 
 
 def generate_prompt(params: Customer) -> str:
