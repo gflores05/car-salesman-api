@@ -1,5 +1,7 @@
 from typing import Literal
 
+ChatService = Literal["openai", "gemini", "ollama"]
+
 MaritalStatus = Literal["Single", "Married"]
 
 Country = Literal[
@@ -173,7 +175,6 @@ Country = Literal[
   "Sudan",
   "Suriname",
   "Sweden",
-  "Switzerland",
   "Syria",
   "Tajikistan",
   "Tanzania",

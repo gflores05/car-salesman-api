@@ -1,3 +1,22 @@
+[project]
+name = "car-salesman-api"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [{ name = "gflores05", email = "gabriel.flores0503@gmail.com" }]
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi[standard]>=0.141.1",
+    "langchain>=1.4.3",
+    "langchain-google-genai>=4.4.0",
+    "langchain-ollama>=1.1.0",
+    "langchain-openai>=1.6.6",
+    "pydantic>=2.13.5",
+    "pydantic-settings>=2.15.0",
+    "returns>=0.29.0",
+    "ruff>=0.16.9",
+]
+
 [tool.mypy]
 python_version = "3.14"
 warn_return_any = true
@@ -9,7 +28,9 @@ plugins = ["returns.contrib.mypy.returns_plugin"]
 # Sets the indentation style for both linting rules and the formatter
 indent-width = 2
 
-
 [tool.ruff.format]
 # Enforces spaces instead of tabs
 indent-style = "space"
+
+[tool.fastapi]
+entrypoint = "src.main:app"
