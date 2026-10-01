@@ -13,3 +13,6 @@ class QuestionsOutputModel(BaseModel):
   marital_status_question: str = Field(
     description="The question to ask the client for their marital status"
   )
+  country_question: str = Field(
+    description="The question to ask the client for their country of residence"
+  )

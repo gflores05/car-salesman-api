@@ -1,6 +1,7 @@
 from langchain_core.prompts import (
   ChatPromptTemplate,
   HumanMessagePromptTemplate,
+  MessagesPlaceholder,
   SystemMessagePromptTemplate,
 )
 
@@ -14,7 +15,7 @@ QUESTIONS_PROMPT = HumanMessagePromptTemplate.from_template(
 )
 
 CAR_RECOMMENDATION_PROMPT = HumanMessagePromptTemplate.from_template(
-  "What's the best car for me if I'm {marital_status}, I'm {age} years old, I'm from {country} and my monthly salary is ${salary}. Return the result as markdown."
+  "What's the best car for me based on my responses? Return the result as markdown and in the language of the country."
 )
 
 
@@ -23,4 +24,10 @@ def create_question_prompt():
 
 
 def create_recommendation_prompt():
-  return ChatPromptTemplate.from_messages([SYSTEM_PROMPT, CAR_RECOMMENDATION_PROMPT])
+  return ChatPromptTemplate.from_messages(
+    [
+      SYSTEM_PROMPT,
+      MessagesPlaceholder(variable_name="history"),
+      CAR_RECOMMENDATION_PROMPT,
+    ]
+  )
